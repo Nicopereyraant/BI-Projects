@@ -1,0 +1,16 @@
+﻿producto_id,producto,categoria,precio_unitario
+1,Café Espresso,Cafetería,2800
+2,Café Americano,Cafetería,3200
+3,Cappuccino,Cafetería,4200
+4,Latte,Cafetería,4300
+5,Flat White,Cafetería,4500
+6,Té,Cafetería,2800
+7,Medialuna,Pastelería,2200
+8,Croissant,Pastelería,3500
+9,Budín de limón,Pastelería,3200
+10,Cheesecake,Pastelería,5200
+11,Cookie chocolate,Pastelería,2800
+12,Tostado de jamón y queso,Comida,6500
+13,Avocado toast,Comida,7200
+14,Bagel de salmón,Comida,8900
+15,Jugo de naranja,Bebidas,3800
