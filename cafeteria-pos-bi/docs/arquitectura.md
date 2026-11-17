@@ -31,7 +31,7 @@ Las vistas `vw_ventas_diarias`, `vw_ventas_por_producto`, `vw_ventas_por_medio_p
 
 ## Separación entre histórico y flujo diario
 
-El histórico inicial se importó desde CSV directamente a PostgreSQL. La serie del 30/08 al 15/11/2026 se completó con SQL sintético identificable por IDs `HGEN-`. Los CSV de operación diaria pasan por n8n y usan IDs `V-`. Esta separación permite probar el control de calidad sin hacer pasar una carga masiva por el workflow de cierre.
+El histórico inicial se preparó desde [CSV crudos](../../data/raw/README.md) para agregar zona horaria y `linea_id`, y luego se importó directamente a PostgreSQL. La serie del 30/08 al 15/11/2026 se completó con SQL sintético identificable por IDs `HGEN-`. Los CSV de operación diaria pasan por n8n y usan IDs `V-`. Esta separación permite probar el control de calidad sin hacer pasar una carga masiva por el workflow de cierre.
 
 ## Alcance
 

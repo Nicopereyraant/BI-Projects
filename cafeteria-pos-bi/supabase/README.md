@@ -7,10 +7,18 @@
 3. Ejecutar [02_fix_process_pos_batch.sql](02_fix_process_pos_batch.sql), que corrige la referencia ambigua a `batch_id` en la función.
 4. Ejecutar [03_reporting_views.sql](03_reporting_views.sql) para las vistas de franja horaria, medio de pago/canal y estado de lotes.
 5. Ejecutar [04_fechas_locales.sql](04_fechas_locales.sql). Corrige las fechas de las vistas diarias y por producto a `America/Argentina/Buenos_Aires`.
-6. Importar los [CSV iniciales](../../data/raw/README.md) en este orden: sucursales, productos, ventas, detalle_ventas. Antes, ejecutar [preflight_initial_load.sql](preflight_initial_load.sql) si se quiere verificar que las tablas están vacías.
+6. Preparar los [CSV crudos](../../data/raw/README.md) con [preparar_carga_inicial.ps1](../scripts/preparar_carga_inicial.ps1). El script agrega `-03:00` a las fechas y `linea_id` a cada ticket; deja los archivos en `cafeteria-pos-bi/data/prepared/`. Antes de importarlos, ejecutar [preflight_initial_load.sql](preflight_initial_load.sql) si se quiere verificar que las tablas están vacías. Importar **los archivos preparados** en este orden: sucursales, productos, ventas, detalle_ventas.
 7. Para reproducir la continuidad histórica, ejecutar [05_backfill_sintetico_2026.sql](05_backfill_sintetico_2026.sql) por semanas cambiando las fechas de su CTE inicial. Usa IDs `HGEN-` e inserción sin duplicados.
 
 El proyecto existente se construyó de forma incremental; los scripts 01 y 02 se conservan para mostrar esa evolución. `process_pos_batch(jsonb)` recibe las ventas y líneas ya validadas por n8n, guarda el lote en `import_batches` y confirma las filas en una operación de base de datos.
+
+Desde la raíz del repo, en PowerShell:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\cafeteria-pos-bi\scripts\preparar_carga_inicial.ps1 -RawDir .\data\raw -OutDir .\cafeteria-pos-bi\data\prepared
+```
+
+La prueba local generó **52.327 tickets y 106.772 líneas**. Los cuatro CSV producidos coincidieron byte a byte con los archivos usados para la carga inicial. El directorio `data/prepared/` está ignorado por Git.
 
 ## Comprobación
 

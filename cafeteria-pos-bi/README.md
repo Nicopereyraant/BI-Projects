@@ -30,7 +30,7 @@ flowchart LR
 
 ## Datos y reporte
 
-Los [CSV iniciales](../data/raw/README.md) cubren del 01/06 al 29/08/2026. Un [backfill sintético](supabase/05_backfill_sintetico_2026.sql) agregó 44.835 tickets del 30/08 al 15/11/2026 para completar la serie. El 16/11 se cargaron 15 tickets de **prueba**, por lo que ese día es parcial y no debe compararse con días completos.
+Los [CSV crudos iniciales](../data/raw/README.md) cubren del 01/06 al 29/08/2026; un [script reproducible](scripts/preparar_carga_inicial.ps1) los adapta al esquema de Supabase. Un [backfill sintético](supabase/05_backfill_sintetico_2026.sql) agregó 44.835 tickets del 30/08 al 15/11/2026 para completar la serie. El 16/11 se cargaron 15 tickets de **prueba**, por lo que ese día es parcial y no debe compararse con días completos.
 
 El informe tiene dos páginas:
 
