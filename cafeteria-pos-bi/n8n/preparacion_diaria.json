@@ -1,5 +1,5 @@
 {
-    "name":  "CafeterÃ­a POS â€” PreparaciÃ³n diaria",
+    "name":  "Cafeteria POS - Preparacion diaria",
     "nodes":  [
                   {
                       "parameters":  {
@@ -24,10 +24,10 @@
                       "type":  "n8n-nodes-base.googleDrive",
                       "typeVersion":  3,
                       "position":  [
-                                       -176,
-                                       -32
+                                       -864,
+                                       480
                                    ],
-                      "id":  "33c49847-a735-4e18-a28e-f2c96ed68956",
+                      "id":  "c0386f23-fe26-480e-85e6-0c9cc4cfee35",
                       "name":  "CREATE input folder"
                   },
                   {
@@ -55,10 +55,10 @@
                       "type":  "n8n-nodes-base.googleDrive",
                       "typeVersion":  3,
                       "position":  [
-                                       -624,
-                                       -128
+                                       -1312,
+                                       384
                                    ],
-                      "id":  "cbbb1b12-00bd-4c20-b7db-2165e79699c3",
+                      "id":  "7c791af8-2ad1-49c1-853f-f3b4e77bd097",
                       "name":  "SEARCH input folder",
                       "alwaysOutputData":  true
                   },
@@ -81,10 +81,10 @@
                       "type":  "n8n-nodes-base.set",
                       "typeVersion":  3.5,
                       "position":  [
-                                       32,
-                                       -144
+                                       -656,
+                                       368
                                    ],
-                      "id":  "af9148c6-ec1d-4a85-afe3-0ce202615087",
+                      "id":  "32284f80-4253-4446-b9d5-0818a9176e77",
                       "name":  "SET input folder id"
                   },
                   {
@@ -117,10 +117,10 @@
                       "type":  "n8n-nodes-base.if",
                       "typeVersion":  2.3,
                       "position":  [
-                                       -400,
-                                       -128
+                                       -1088,
+                                       384
                                    ],
-                      "id":  "3e848893-7549-42e5-a9c2-ab3198634953",
+                      "id":  "81ad3264-7d35-49bd-b22a-4ff5bf4194fc",
                       "name":  "IF input folder exists ?"
                   },
                   {
@@ -129,7 +129,7 @@
                                                       "interval":  [
                                                                        {
                                                                            "field":  "cronExpression",
-                                                                           "expression":  "0 2 * * 1-5"
+                                                                           "expression":  "0 2 * * *"
                                                                        }
                                                                    ]
                                                   }
@@ -137,10 +137,10 @@
                       "type":  "n8n-nodes-base.scheduleTrigger",
                       "typeVersion":  1.4,
                       "position":  [
-                                       -992,
-                                       224
+                                       -1680,
+                                       736
                                    ],
-                      "id":  "1aa0100d-060e-48a2-b1d2-33b71569da82",
+                      "id":  "5c07c058-d502-4366-801c-872c842207be",
                       "name":  "Schedule Trigger"
                   },
                   {
@@ -168,10 +168,10 @@
                       "type":  "n8n-nodes-base.googleDrive",
                       "typeVersion":  3,
                       "position":  [
-                                       -624,
-                                       224
+                                       -1312,
+                                       736
                                    ],
-                      "id":  "d371f249-151f-4e47-a497-8eeb9df6c1a2",
+                      "id":  "a77d8e90-2e8d-4c39-b058-1664a77bd4f9",
                       "name":  "SEARCH processed folder",
                       "alwaysOutputData":  true
                   },
@@ -198,10 +198,10 @@
                       "type":  "n8n-nodes-base.googleDrive",
                       "typeVersion":  3,
                       "position":  [
-                                       -176,
-                                       320
+                                       -864,
+                                       832
                                    ],
-                      "id":  "3536b49f-48f7-4398-95e8-50924a738296",
+                      "id":  "a63438f0-8c0c-4624-956f-a63a7a2d0ac9",
                       "name":  "CREATE processed folder"
                   },
                   {
@@ -223,10 +223,10 @@
                       "type":  "n8n-nodes-base.set",
                       "typeVersion":  3.5,
                       "position":  [
-                                       32,
-                                       208
+                                       -656,
+                                       720
                                    ],
-                      "id":  "018ccc73-6d22-4cd8-975c-1422cf1aae6d",
+                      "id":  "ccbe7323-4787-4671-8dad-0ce5f9b9f633",
                       "name":  "SET processed folder id"
                   },
                   {
@@ -252,10 +252,10 @@
                       "type":  "n8n-nodes-base.googleDrive",
                       "typeVersion":  3,
                       "position":  [
-                                       240,
-                                       -144
+                                       -448,
+                                       368
                                    ],
-                      "id":  "ef999e0a-7113-4391-b413-ce33529c7e4e",
+                      "id":  "1678b631-e39a-4251-8ad8-365fb5a4bd68",
                       "name":  "SEARCH day folder - branch 0",
                       "alwaysOutputData":  true
                   },
@@ -289,10 +289,10 @@
                       "type":  "n8n-nodes-base.if",
                       "typeVersion":  2.3,
                       "position":  [
-                                       464,
-                                       -144
+                                       -224,
+                                       368
                                    ],
-                      "id":  "45d79a4a-8254-4a8e-832e-75f03f5ab06a",
+                      "id":  "16d7a9e9-d5c0-4312-a869-b15bd2537a31",
                       "name":  "IF day folder exists ? - branch 0"
                   },
                   {
@@ -316,10 +316,10 @@
                       "type":  "n8n-nodes-base.googleDrive",
                       "typeVersion":  3,
                       "position":  [
-                                       688,
-                                       -48
+                                       0,
+                                       464
                                    ],
-                      "id":  "15d05356-360c-4bb7-80f8-8f27791af7ac",
+                      "id":  "75fae635-4797-4c78-8f2b-14aae6766111",
                       "name":  "CREATE day folder - branch 0"
                   },
                   {
@@ -341,10 +341,10 @@
                       "type":  "n8n-nodes-base.set",
                       "typeVersion":  3.5,
                       "position":  [
-                                       880,
-                                       -160
+                                       192,
+                                       352
                                    ],
-                      "id":  "2817ad2d-d00a-4ffc-9e78-6302c4e2f00c",
+                      "id":  "3ca214f0-ffbc-47f6-8875-890520ebce64",
                       "name":  "SET day folder id - branch 0"
                   },
                   {
@@ -370,10 +370,10 @@
                       "type":  "n8n-nodes-base.googleDrive",
                       "typeVersion":  3,
                       "position":  [
-                                       240,
-                                       208
+                                       -448,
+                                       720
                                    ],
-                      "id":  "d59ebd79-175f-4fe8-9186-d555bfa26056",
+                      "id":  "842839d9-f4db-4b9d-9a70-5e7961c38cf0",
                       "name":  "SEARCH day folder - branch 1",
                       "alwaysOutputData":  true
                   },
@@ -407,10 +407,10 @@
                       "type":  "n8n-nodes-base.if",
                       "typeVersion":  2.3,
                       "position":  [
-                                       464,
-                                       208
+                                       -224,
+                                       720
                                    ],
-                      "id":  "3c66384a-2de0-42df-b939-0e2c35e26ce0",
+                      "id":  "e35a61e0-9267-4119-b97c-d5a225a95ec5",
                       "name":  "IF day folder exists ? - branch 1"
                   },
                   {
@@ -434,10 +434,10 @@
                       "type":  "n8n-nodes-base.googleDrive",
                       "typeVersion":  3,
                       "position":  [
-                                       688,
-                                       304
+                                       0,
+                                       816
                                    ],
-                      "id":  "8e96a768-6109-44e1-8580-1b901a5b535a",
+                      "id":  "935c5938-b3b7-44e4-b674-fe172bd5cb6b",
                       "name":  "CREATE day folder - branch 1"
                   },
                   {
@@ -459,10 +459,10 @@
                       "type":  "n8n-nodes-base.set",
                       "typeVersion":  3.5,
                       "position":  [
-                                       880,
-                                       192
+                                       192,
+                                       704
                                    ],
-                      "id":  "a7a06eac-1370-4035-bddc-45b36a34f74e",
+                      "id":  "63c6ef13-1983-4792-b7d3-874e9cec2e26",
                       "name":  "SET day folder id - branch 1"
                   },
                   {
@@ -490,10 +490,10 @@
                       "type":  "n8n-nodes-base.googleDrive",
                       "typeVersion":  3,
                       "position":  [
-                                       -640,
-                                       624
+                                       -1328,
+                                       1136
                                    ],
-                      "id":  "d0909987-84d4-4ee4-aafa-90ce3d093aab",
+                      "id":  "490e003b-6015-4e27-bc55-019d6b8fe71d",
                       "name":  "SEARCH rejected folder",
                       "alwaysOutputData":  true
                   },
@@ -527,10 +527,10 @@
                       "type":  "n8n-nodes-base.if",
                       "typeVersion":  2.3,
                       "position":  [
-                                       -416,
-                                       624
+                                       -1104,
+                                       1136
                                    ],
-                      "id":  "c13a0d0b-5112-432f-9ae3-6ca6ad30ba7a",
+                      "id":  "d6d60df1-7066-4250-a48a-a9b8ae506dee",
                       "name":  "IF rejected folder exists ?"
                   },
                   {
@@ -556,10 +556,10 @@
                       "type":  "n8n-nodes-base.googleDrive",
                       "typeVersion":  3,
                       "position":  [
-                                       -192,
-                                       720
+                                       -880,
+                                       1232
                                    ],
-                      "id":  "b477d589-1e46-4b88-b7c2-44f40ee9f8d9",
+                      "id":  "030dfbf1-dd40-45c0-9f2d-d56756896604",
                       "name":  "CREATE rejected folder"
                   },
                   {
@@ -581,10 +581,10 @@
                       "type":  "n8n-nodes-base.set",
                       "typeVersion":  3.5,
                       "position":  [
-                                       16,
-                                       608
+                                       -672,
+                                       1120
                                    ],
-                      "id":  "ff5f323f-335b-412f-a191-163d0d4746cb",
+                      "id":  "43d5d594-078c-4652-8b53-76d6919e6fbc",
                       "name":  "SET rejected folder id"
                   },
                   {
@@ -610,10 +610,10 @@
                       "type":  "n8n-nodes-base.googleDrive",
                       "typeVersion":  3,
                       "position":  [
-                                       224,
-                                       608
+                                       -464,
+                                       1120
                                    ],
-                      "id":  "a7068a4f-deab-40b0-9639-3de81311652f",
+                      "id":  "9d12cc33-17a7-44eb-b601-bc590457a733",
                       "name":  "SEARCH day folder - branch 2",
                       "alwaysOutputData":  true
                   },
@@ -647,10 +647,10 @@
                       "type":  "n8n-nodes-base.if",
                       "typeVersion":  2.3,
                       "position":  [
-                                       448,
-                                       608
+                                       -240,
+                                       1120
                                    ],
-                      "id":  "22b9d18a-32f3-4e93-bf69-412435ddd267",
+                      "id":  "3a420627-196d-4d21-9e82-fcf861c591cd",
                       "name":  "IF day folder exists ? - branch 2"
                   },
                   {
@@ -674,10 +674,10 @@
                       "type":  "n8n-nodes-base.googleDrive",
                       "typeVersion":  3,
                       "position":  [
-                                       672,
-                                       704
+                                       -16,
+                                       1216
                                    ],
-                      "id":  "ae6b49cd-4796-4f0c-abed-109302ef94ee",
+                      "id":  "1f185595-25d4-47a8-9f99-762ed7b3e35f",
                       "name":  "CREATE day folder - branch 2"
                   },
                   {
@@ -699,10 +699,10 @@
                       "type":  "n8n-nodes-base.set",
                       "typeVersion":  3.5,
                       "position":  [
-                                       864,
-                                       592
+                                       176,
+                                       1104
                                    ],
-                      "id":  "e28d8efd-395c-4482-ae58-71b276f5b1fa",
+                      "id":  "300940eb-aed5-43ed-8beb-d76f5a3d31d3",
                       "name":  "SET day folder id - branch 2"
                   },
                   {
@@ -735,10 +735,10 @@
                       "type":  "n8n-nodes-base.if",
                       "typeVersion":  2.3,
                       "position":  [
-                                       -400,
-                                       224
+                                       -1088,
+                                       736
                                    ],
-                      "id":  "a2e6574d-4157-45fb-bf03-126032249924",
+                      "id":  "7cd59298-0f2b-4ca5-9218-bdc97c5c6745",
                       "name":  "IF processed folder exists ?"
                   }
               ],
@@ -1040,8 +1040,7 @@
                     },
     "settings":  {
                      "executionOrder":  "v1",
-                     "binaryMode":  "separate",
-                     "timezone":  "America/Argentina/Buenos_Aires"
+                     "binaryMode":  "separate"
                  },
     "active":  false
 }

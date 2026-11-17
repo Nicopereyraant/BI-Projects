@@ -12,6 +12,6 @@ Son exports **sanitizados** para mostrar el diseño y poder importarlos en otra 
 3. Sustituir `CONFIGURAR_DESTINATARIO@example.com` en los nodos Gmail.
 4. Confirmar la zona horaria de ambos workflows antes de habilitar un disparador.
 
-La demo se ejecuta manualmente y los workflows originales están desactivados a propósito. El cierre tiene cron `30 20 * * *`. El export local de preparación tiene cron `0 2 * * 1-5`; si se habilita el cierre todos los días, debe alinearse la preparación para cubrir fines de semana.
+La demo se ejecuta manualmente y los workflows originales están desactivados a propósito. El export de preparación que entregó el autor tiene cron `0 2 * * *` y el cierre `30 20 * * *`: ambos contemplan todos los días. La fecha de carpeta se calcula en `America/Argentina/Buenos_Aires`; antes de activar los cron hay que confirmar también la zona horaria de programación de la instancia.
 
 No se incluyen credenciales, contraseñas ni tokens. Los IDs de nodos se conservaron porque mantienen las conexiones internas del workflow.

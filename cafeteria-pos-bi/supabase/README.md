@@ -9,6 +9,7 @@
 5. Ejecutar [04_fechas_locales.sql](04_fechas_locales.sql). Corrige las fechas de las vistas diarias y por producto a `America/Argentina/Buenos_Aires`.
 6. Preparar los [CSV crudos](../../data/raw/README.md) con [preparar_carga_inicial.ps1](../scripts/preparar_carga_inicial.ps1). El script agrega `-03:00` a las fechas y `linea_id` a cada ticket; deja los archivos en `cafeteria-pos-bi/data/prepared/`. Antes de importarlos, ejecutar [preflight_initial_load.sql](preflight_initial_load.sql) si se quiere verificar que las tablas están vacías. Importar **los archivos preparados** en este orden: sucursales, productos, ventas, detalle_ventas.
 7. Para reproducir la continuidad histórica, ejecutar [05_backfill_sintetico_2026.sql](05_backfill_sintetico_2026.sql) por semanas cambiando las fechas de su CTE inicial. Usa IDs `HGEN-` e inserción sin duplicados.
+8. Ejecutar [06_restringir_api.sql](06_restringir_api.sql) para retirar el acceso de `anon` y `authenticated` a las vistas y a la función de carga. El rol PostgreSQL `looker_ro` conserva `SELECT` en las cuatro vistas comerciales utilizadas por Data Studio.
 
 El proyecto existente se construyó de forma incremental; los scripts 01 y 02 se conservan para mostrar esa evolución. `process_pos_batch(jsonb)` recibe las ventas y líneas ya validadas por n8n, guarda el lote en `import_batches` y confirma las filas en una operación de base de datos.
 
@@ -41,4 +42,4 @@ from (
 
 Los dos primeros resultados deben coincidir; `descuadres` debe ser cero. En la demo, al 16/11/2026, las vistas y tablas coincidían en **97.246 tickets y $985.550.800**, incluidos los 15 tickets de prueba del último día.
 
-Las tablas del esquema `public` tienen RLS habilitada. Para Data Studio se usa una cuenta PostgreSQL de solo lectura con acceso a las vistas; su contraseña y la conexión privada no se publican aquí.
+Las tablas del esquema `public` tienen RLS habilitada. Como las vistas pueden ejecutarse con permisos del propietario, RLS en las tablas por sí sola no basta para restringirlas mediante la API. El paso 8 retira los permisos de lectura a los roles de la API y verifica que `looker_ro` conserve solo las vistas comerciales. Para Data Studio se usa esa cuenta PostgreSQL de solo lectura; su contraseña no se publica aquí. El acceso al panel de Supabase requiere iniciar sesión en la cuenta propietaria.

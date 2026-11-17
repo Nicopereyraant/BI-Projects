@@ -54,3 +54,7 @@ Los workflows se mantienen **desactivados a propósito**. Las pruebas se ejecuta
 - [Ejemplos de cinco sucursales](data/ejemplos/)
 
 No se publican contraseñas, tokens ni datos de clientes reales.
+
+## Acceso para quien revisa el proyecto
+
+El repo público permite revisar los SQL, los exports sanitizados de n8n, los CSV ficticios y las decisiones de diseño. El enlace de Data Studio muestra el resultado visual si el informe está compartido para lectura. El repo y el enlace del informe **no dan acceso** a la cuenta de Supabase ni a la instancia de n8n. En una entrevista se puede mostrar esas herramientas mediante pantalla compartida, recorrer una ejecución y explicar la validación y el rechazo. Los permisos de visualización del informe deben comprobarse desde una cuenta externa o ventana privada.

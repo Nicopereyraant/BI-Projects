@@ -33,7 +33,7 @@ La segunda consulta debe devolver cero filas. El [SQL de backfill](../supabase/0
 
 ## Estado de programación
 
-El export de preparación tiene un cron a las 02:00 de lunes a viernes, con zona `America/Argentina/Buenos_Aires`. El de cierre tiene un cron a las 20:30 todos los días, pero su configuración exportada no fija la zona horaria. Ambos están desactivados en esta demo. Si se activaran para operar sin intervención, habría que confirmar la zona horaria del cierre y hacer que la preparación cubra los mismos días que el cierre.
+El export de preparación tiene un cron a las 02:00 todos los días y el de cierre a las 20:30 todos los días. Ambos están desactivados en esta demo. Sus configuraciones exportadas no fijan la zona horaria del disparador, aunque calculan la fecha operativa con `America/Argentina/Buenos_Aires`; antes de activarlos habría que confirmar la zona horaria de la instancia.
 
 ## Lectura correcta del dashboard
 
