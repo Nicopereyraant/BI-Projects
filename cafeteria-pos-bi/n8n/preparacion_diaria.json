@@ -1,0 +1,1047 @@
+{
+    "name":  "CafeterÃ­a POS â€” PreparaciÃ³n diaria",
+    "nodes":  [
+                  {
+                      "parameters":  {
+                                         "resource":  "folder",
+                                         "name":  "input",
+                                         "driveId":  {
+                                                         "__rl":  true,
+                                                         "mode":  "list",
+                                                         "value":  "My Drive"
+                                                     },
+                                         "folderId":  {
+                                                          "__rl":  true,
+                                                          "value":  "REEMPLAZAR_ID_CARPETA_RAIZ",
+                                                          "mode":  "list",
+                                                          "cachedResultName":  "CafeterÃ­a POS - BI",
+                                                          "cachedResultUrl":  "https://drive.google.com/drive/folders/REEMPLAZAR_ID_CARPETA_RAIZ"
+                                                      },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.googleDrive",
+                      "typeVersion":  3,
+                      "position":  [
+                                       -176,
+                                       -32
+                                   ],
+                      "id":  "33c49847-a735-4e18-a28e-f2c96ed68956",
+                      "name":  "CREATE input folder"
+                  },
+                  {
+                      "parameters":  {
+                                         "resource":  "fileFolder",
+                                         "searchMethod":  "query",
+                                         "queryString":  "name = \u0027input\u0027 and mimeType = \u0027application/vnd.google-apps.folder\u0027 and \u0027REEMPLAZAR_ID_CARPETA_RAIZ\u0027 in parents and trashed = false",
+                                         "filter":  {
+                                                        "driveId":  {
+                                                                        "mode":  "list",
+                                                                        "value":  "My Drive"
+                                                                    },
+                                                        "folderId":  {
+                                                                         "__rl":  true,
+                                                                         "value":  "REEMPLAZAR_ID_CARPETA_RAIZ",
+                                                                         "mode":  "list",
+                                                                         "cachedResultName":  "CafeterÃ­a POS - BI",
+                                                                         "cachedResultUrl":  "https://drive.google.com/drive/folders/REEMPLAZAR_ID_CARPETA_RAIZ"
+                                                                     }
+                                                    },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.googleDrive",
+                      "typeVersion":  3,
+                      "position":  [
+                                       -624,
+                                       -128
+                                   ],
+                      "id":  "cbbb1b12-00bd-4c20-b7db-2165e79699c3",
+                      "name":  "SEARCH input folder",
+                      "alwaysOutputData":  true
+                  },
+                  {
+                      "parameters":  {
+                                         "assignments":  {
+                                                             "assignments":  [
+                                                                                 {
+                                                                                     "id":  "bb12aba9-aa7d-46a6-aa78-305024132930",
+                                                                                     "name":  "input_folder_id",
+                                                                                     "value":  "={{ $json.id }}",
+                                                                                     "type":  "string"
+                                                                                 }
+                                                                             ]
+                                                         },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.set",
+                      "typeVersion":  3.5,
+                      "position":  [
+                                       32,
+                                       -144
+                                   ],
+                      "id":  "af9148c6-ec1d-4a85-afe3-0ce202615087",
+                      "name":  "SET input folder id"
+                  },
+                  {
+                      "parameters":  {
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "caseSensitive":  true,
+                                                                            "leftValue":  "",
+                                                                            "typeValidation":  "strict",
+                                                                            "version":  3
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "id":  "b305c332-1c38-40c3-a4b8-a71b95b9ffe7",
+                                                                                   "leftValue":  "={{ $json.id }}",
+                                                                                   "rightValue":  "",
+                                                                                   "operator":  {
+                                                                                                    "type":  "string",
+                                                                                                    "operation":  "exists",
+                                                                                                    "singleValue":  true
+                                                                                                }
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2.3,
+                      "position":  [
+                                       -400,
+                                       -128
+                                   ],
+                      "id":  "3e848893-7549-42e5-a9c2-ab3198634953",
+                      "name":  "IF input folder exists ?"
+                  },
+                  {
+                      "parameters":  {
+                                         "rule":  {
+                                                      "interval":  [
+                                                                       {
+                                                                           "field":  "cronExpression",
+                                                                           "expression":  "0 2 * * 1-5"
+                                                                       }
+                                                                   ]
+                                                  }
+                                     },
+                      "type":  "n8n-nodes-base.scheduleTrigger",
+                      "typeVersion":  1.4,
+                      "position":  [
+                                       -992,
+                                       224
+                                   ],
+                      "id":  "1aa0100d-060e-48a2-b1d2-33b71569da82",
+                      "name":  "Schedule Trigger"
+                  },
+                  {
+                      "parameters":  {
+                                         "resource":  "fileFolder",
+                                         "searchMethod":  "query",
+                                         "queryString":  "name = \u0027processed\u0027 and mimeType = \u0027application/vnd.google-apps.folder\u0027 and \u0027REEMPLAZAR_ID_CARPETA_RAIZ\u0027 in parents and trashed = false",
+                                         "filter":  {
+                                                        "driveId":  {
+                                                                        "mode":  "list",
+                                                                        "value":  "My Drive"
+                                                                    },
+                                                        "folderId":  {
+                                                                         "__rl":  true,
+                                                                         "value":  "REEMPLAZAR_ID_CARPETA_RAIZ",
+                                                                         "mode":  "list",
+                                                                         "cachedResultName":  "CafeterÃ­a POS - BI",
+                                                                         "cachedResultUrl":  "https://drive.google.com/drive/folders/REEMPLAZAR_ID_CARPETA_RAIZ"
+                                                                     }
+                                                    },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.googleDrive",
+                      "typeVersion":  3,
+                      "position":  [
+                                       -624,
+                                       224
+                                   ],
+                      "id":  "d371f249-151f-4e47-a497-8eeb9df6c1a2",
+                      "name":  "SEARCH processed folder",
+                      "alwaysOutputData":  true
+                  },
+                  {
+                      "parameters":  {
+                                         "resource":  "folder",
+                                         "name":  "processed",
+                                         "driveId":  {
+                                                         "__rl":  true,
+                                                         "mode":  "list",
+                                                         "value":  "My Drive"
+                                                     },
+                                         "folderId":  {
+                                                          "__rl":  true,
+                                                          "value":  "REEMPLAZAR_ID_CARPETA_RAIZ",
+                                                          "mode":  "list",
+                                                          "cachedResultName":  "CafeterÃ­a POS - BI",
+                                                          "cachedResultUrl":  "https://drive.google.com/drive/folders/REEMPLAZAR_ID_CARPETA_RAIZ"
+                                                      },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.googleDrive",
+                      "typeVersion":  3,
+                      "position":  [
+                                       -176,
+                                       320
+                                   ],
+                      "id":  "3536b49f-48f7-4398-95e8-50924a738296",
+                      "name":  "CREATE processed folder"
+                  },
+                  {
+                      "parameters":  {
+                                         "assignments":  {
+                                                             "assignments":  [
+                                                                                 {
+                                                                                     "id":  "bb12aba9-aa7d-46a6-aa78-305024132930",
+                                                                                     "name":  "processed_folder_id",
+                                                                                     "value":  "={{ $json.id }}",
+                                                                                     "type":  "string"
+                                                                                 }
+                                                                             ]
+                                                         },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.set",
+                      "typeVersion":  3.5,
+                      "position":  [
+                                       32,
+                                       208
+                                   ],
+                      "id":  "018ccc73-6d22-4cd8-975c-1422cf1aae6d",
+                      "name":  "SET processed folder id"
+                  },
+                  {
+                      "parameters":  {
+                                         "resource":  "fileFolder",
+                                         "searchMethod":  "query",
+                                         "queryString":  "={{ \"name = \u0027\" + $now.setZone(\u0027America/Argentina/Buenos_Aires\u0027).toFormat(\u0027yyyy-LL-dd\u0027) + \"\u0027 and mimeType = \u0027application/vnd.google-apps.folder\u0027 and \u0027\" + $(\u0027SET input folder id\u0027).first().json.input_folder_id + \"\u0027 in parents and trashed = false\" }}",
+                                         "filter":  {
+                                                        "driveId":  {
+                                                                        "mode":  "list",
+                                                                        "value":  "My Drive"
+                                                                    },
+                                                        "folderId":  {
+                                                                         "__rl":  true,
+                                                                         "value":  "={{ $(\u0027SET input folder id\u0027).first().json.input_folder_id }}",
+                                                                         "mode":  "id"
+                                                                     }
+                                                    },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.googleDrive",
+                      "typeVersion":  3,
+                      "position":  [
+                                       240,
+                                       -144
+                                   ],
+                      "id":  "ef999e0a-7113-4391-b413-ce33529c7e4e",
+                      "name":  "SEARCH day folder - branch 0",
+                      "alwaysOutputData":  true
+                  },
+                  {
+                      "parameters":  {
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "caseSensitive":  true,
+                                                                            "leftValue":  "",
+                                                                            "typeValidation":  "strict",
+                                                                            "version":  3
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "id":  "b305c332-1c38-40c3-a4b8-a71b95b9ffe7",
+                                                                                   "leftValue":  "={{ $json.id }}",
+                                                                                   "rightValue":  "",
+                                                                                   "operator":  {
+                                                                                                    "type":  "string",
+                                                                                                    "operation":  "exists",
+                                                                                                    "singleValue":  true
+                                                                                                }
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2.3,
+                      "position":  [
+                                       464,
+                                       -144
+                                   ],
+                      "id":  "45d79a4a-8254-4a8e-832e-75f03f5ab06a",
+                      "name":  "IF day folder exists ? - branch 0"
+                  },
+                  {
+                      "parameters":  {
+                                         "resource":  "folder",
+                                         "name":  "={{ $now.setZone(\u0027America/Argentina/Buenos_Aires\u0027).toFormat(\u0027yyyy-LL-dd\u0027) }}",
+                                         "driveId":  {
+                                                         "__rl":  true,
+                                                         "mode":  "list",
+                                                         "value":  "My Drive"
+                                                     },
+                                         "folderId":  {
+                                                          "__rl":  true,
+                                                          "value":  "={{ $(\u0027SET input folder id\u0027).first().json.input_folder_id }}",
+                                                          "mode":  "id"
+                                                      },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.googleDrive",
+                      "typeVersion":  3,
+                      "position":  [
+                                       688,
+                                       -48
+                                   ],
+                      "id":  "15d05356-360c-4bb7-80f8-8f27791af7ac",
+                      "name":  "CREATE day folder - branch 0"
+                  },
+                  {
+                      "parameters":  {
+                                         "assignments":  {
+                                                             "assignments":  [
+                                                                                 {
+                                                                                     "id":  "7c138883-15b9-4b92-9e0b-df5e76c15a01",
+                                                                                     "name":  "day_folder_id",
+                                                                                     "value":  "={{ $json.id }}",
+                                                                                     "type":  "string"
+                                                                                 }
+                                                                             ]
+                                                         },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.set",
+                      "typeVersion":  3.5,
+                      "position":  [
+                                       880,
+                                       -160
+                                   ],
+                      "id":  "2817ad2d-d00a-4ffc-9e78-6302c4e2f00c",
+                      "name":  "SET day folder id - branch 0"
+                  },
+                  {
+                      "parameters":  {
+                                         "resource":  "fileFolder",
+                                         "searchMethod":  "query",
+                                         "queryString":  "={{ \"name = \u0027\" + $now.setZone(\u0027America/Argentina/Buenos_Aires\u0027).toFormat(\u0027yyyy-LL-dd\u0027) + \"\u0027 and mimeType = \u0027application/vnd.google-apps.folder\u0027 and \u0027\" + $(\u0027SET processed folder id\u0027).first().json.processed_folder_id + \"\u0027 in parents and trashed = false\" }}",
+                                         "filter":  {
+                                                        "driveId":  {
+                                                                        "mode":  "list",
+                                                                        "value":  "My Drive"
+                                                                    },
+                                                        "folderId":  {
+                                                                         "__rl":  true,
+                                                                         "value":  "={{ $(\u0027SET processed folder id\u0027).first().json.processed_folder_id }}",
+                                                                         "mode":  "id"
+                                                                     }
+                                                    },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.googleDrive",
+                      "typeVersion":  3,
+                      "position":  [
+                                       240,
+                                       208
+                                   ],
+                      "id":  "d59ebd79-175f-4fe8-9186-d555bfa26056",
+                      "name":  "SEARCH day folder - branch 1",
+                      "alwaysOutputData":  true
+                  },
+                  {
+                      "parameters":  {
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "caseSensitive":  true,
+                                                                            "leftValue":  "",
+                                                                            "typeValidation":  "strict",
+                                                                            "version":  3
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "id":  "b305c332-1c38-40c3-a4b8-a71b95b9ffe7",
+                                                                                   "leftValue":  "={{ $json.id }}",
+                                                                                   "rightValue":  "",
+                                                                                   "operator":  {
+                                                                                                    "type":  "string",
+                                                                                                    "operation":  "exists",
+                                                                                                    "singleValue":  true
+                                                                                                }
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2.3,
+                      "position":  [
+                                       464,
+                                       208
+                                   ],
+                      "id":  "3c66384a-2de0-42df-b939-0e2c35e26ce0",
+                      "name":  "IF day folder exists ? - branch 1"
+                  },
+                  {
+                      "parameters":  {
+                                         "resource":  "folder",
+                                         "name":  "={{ $now.setZone(\u0027America/Argentina/Buenos_Aires\u0027).toFormat(\u0027yyyy-LL-dd\u0027) }}",
+                                         "driveId":  {
+                                                         "__rl":  true,
+                                                         "mode":  "list",
+                                                         "value":  "My Drive"
+                                                     },
+                                         "folderId":  {
+                                                          "__rl":  true,
+                                                          "value":  "={{ $(\u0027SET processed folder id\u0027).first().json.processed_folder_id }}",
+                                                          "mode":  "id"
+                                                      },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.googleDrive",
+                      "typeVersion":  3,
+                      "position":  [
+                                       688,
+                                       304
+                                   ],
+                      "id":  "8e96a768-6109-44e1-8580-1b901a5b535a",
+                      "name":  "CREATE day folder - branch 1"
+                  },
+                  {
+                      "parameters":  {
+                                         "assignments":  {
+                                                             "assignments":  [
+                                                                                 {
+                                                                                     "id":  "7c138883-15b9-4b92-9e0b-df5e76c15a01",
+                                                                                     "name":  "day_folder_id",
+                                                                                     "value":  "={{ $json.id }}",
+                                                                                     "type":  "string"
+                                                                                 }
+                                                                             ]
+                                                         },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.set",
+                      "typeVersion":  3.5,
+                      "position":  [
+                                       880,
+                                       192
+                                   ],
+                      "id":  "a7a06eac-1370-4035-bddc-45b36a34f74e",
+                      "name":  "SET day folder id - branch 1"
+                  },
+                  {
+                      "parameters":  {
+                                         "resource":  "fileFolder",
+                                         "searchMethod":  "query",
+                                         "queryString":  "name = \u0027rejected\u0027 and mimeType = \u0027application/vnd.google-apps.folder\u0027 and \u0027REEMPLAZAR_ID_CARPETA_RAIZ\u0027 in parents and trashed = false",
+                                         "filter":  {
+                                                        "driveId":  {
+                                                                        "mode":  "list",
+                                                                        "value":  "My Drive"
+                                                                    },
+                                                        "folderId":  {
+                                                                         "__rl":  true,
+                                                                         "value":  "REEMPLAZAR_ID_CARPETA_RAIZ",
+                                                                         "mode":  "list",
+                                                                         "cachedResultName":  "CafeterÃ­a POS - BI",
+                                                                         "cachedResultUrl":  "https://drive.google.com/drive/folders/REEMPLAZAR_ID_CARPETA_RAIZ"
+                                                                     }
+                                                    },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.googleDrive",
+                      "typeVersion":  3,
+                      "position":  [
+                                       -640,
+                                       624
+                                   ],
+                      "id":  "d0909987-84d4-4ee4-aafa-90ce3d093aab",
+                      "name":  "SEARCH rejected folder",
+                      "alwaysOutputData":  true
+                  },
+                  {
+                      "parameters":  {
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "caseSensitive":  true,
+                                                                            "leftValue":  "",
+                                                                            "typeValidation":  "strict",
+                                                                            "version":  3
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "id":  "b305c332-1c38-40c3-a4b8-a71b95b9ffe7",
+                                                                                   "leftValue":  "={{ $json.id }}",
+                                                                                   "rightValue":  "",
+                                                                                   "operator":  {
+                                                                                                    "type":  "string",
+                                                                                                    "operation":  "exists",
+                                                                                                    "singleValue":  true
+                                                                                                }
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2.3,
+                      "position":  [
+                                       -416,
+                                       624
+                                   ],
+                      "id":  "c13a0d0b-5112-432f-9ae3-6ca6ad30ba7a",
+                      "name":  "IF rejected folder exists ?"
+                  },
+                  {
+                      "parameters":  {
+                                         "resource":  "folder",
+                                         "name":  "rejected",
+                                         "driveId":  {
+                                                         "__rl":  true,
+                                                         "mode":  "list",
+                                                         "value":  "My Drive"
+                                                     },
+                                         "folderId":  {
+                                                          "__rl":  true,
+                                                          "value":  "REEMPLAZAR_ID_CARPETA_RAIZ",
+                                                          "mode":  "list",
+                                                          "cachedResultName":  "CafeterÃ­a POS - BI",
+                                                          "cachedResultUrl":  "https://drive.google.com/drive/folders/REEMPLAZAR_ID_CARPETA_RAIZ"
+                                                      },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.googleDrive",
+                      "typeVersion":  3,
+                      "position":  [
+                                       -192,
+                                       720
+                                   ],
+                      "id":  "b477d589-1e46-4b88-b7c2-44f40ee9f8d9",
+                      "name":  "CREATE rejected folder"
+                  },
+                  {
+                      "parameters":  {
+                                         "assignments":  {
+                                                             "assignments":  [
+                                                                                 {
+                                                                                     "id":  "bb12aba9-aa7d-46a6-aa78-305024132930",
+                                                                                     "name":  "rejected_folder_id",
+                                                                                     "value":  "={{ $json.id }}",
+                                                                                     "type":  "string"
+                                                                                 }
+                                                                             ]
+                                                         },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.set",
+                      "typeVersion":  3.5,
+                      "position":  [
+                                       16,
+                                       608
+                                   ],
+                      "id":  "ff5f323f-335b-412f-a191-163d0d4746cb",
+                      "name":  "SET rejected folder id"
+                  },
+                  {
+                      "parameters":  {
+                                         "resource":  "fileFolder",
+                                         "searchMethod":  "query",
+                                         "queryString":  "={{ \"name = \u0027\" + $now.setZone(\u0027America/Argentina/Buenos_Aires\u0027).toFormat(\u0027yyyy-LL-dd\u0027) + \"\u0027 and mimeType = \u0027application/vnd.google-apps.folder\u0027 and \u0027\" + $(\u0027SET rejected folder id\u0027).first().json.rejected_folder_id + \"\u0027 in parents and trashed = false\" }}",
+                                         "filter":  {
+                                                        "driveId":  {
+                                                                        "mode":  "list",
+                                                                        "value":  "My Drive"
+                                                                    },
+                                                        "folderId":  {
+                                                                         "__rl":  true,
+                                                                         "value":  "={{ $(\u0027SET rejected folder id\u0027).first().json.rejected_folder_id }}",
+                                                                         "mode":  "id"
+                                                                     }
+                                                    },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.googleDrive",
+                      "typeVersion":  3,
+                      "position":  [
+                                       224,
+                                       608
+                                   ],
+                      "id":  "a7068a4f-deab-40b0-9639-3de81311652f",
+                      "name":  "SEARCH day folder - branch 2",
+                      "alwaysOutputData":  true
+                  },
+                  {
+                      "parameters":  {
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "caseSensitive":  true,
+                                                                            "leftValue":  "",
+                                                                            "typeValidation":  "strict",
+                                                                            "version":  3
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "id":  "b305c332-1c38-40c3-a4b8-a71b95b9ffe7",
+                                                                                   "leftValue":  "={{ $json.id }}",
+                                                                                   "rightValue":  "",
+                                                                                   "operator":  {
+                                                                                                    "type":  "string",
+                                                                                                    "operation":  "exists",
+                                                                                                    "singleValue":  true
+                                                                                                }
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2.3,
+                      "position":  [
+                                       448,
+                                       608
+                                   ],
+                      "id":  "22b9d18a-32f3-4e93-bf69-412435ddd267",
+                      "name":  "IF day folder exists ? - branch 2"
+                  },
+                  {
+                      "parameters":  {
+                                         "resource":  "folder",
+                                         "name":  "={{ $now.setZone(\u0027America/Argentina/Buenos_Aires\u0027).toFormat(\u0027yyyy-LL-dd\u0027) }}",
+                                         "driveId":  {
+                                                         "__rl":  true,
+                                                         "mode":  "list",
+                                                         "value":  "My Drive"
+                                                     },
+                                         "folderId":  {
+                                                          "__rl":  true,
+                                                          "value":  "={{ $(\u0027SET rejected folder id\u0027).first().json.rejected_folder_id }}",
+                                                          "mode":  "id"
+                                                      },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.googleDrive",
+                      "typeVersion":  3,
+                      "position":  [
+                                       672,
+                                       704
+                                   ],
+                      "id":  "ae6b49cd-4796-4f0c-abed-109302ef94ee",
+                      "name":  "CREATE day folder - branch 2"
+                  },
+                  {
+                      "parameters":  {
+                                         "assignments":  {
+                                                             "assignments":  [
+                                                                                 {
+                                                                                     "id":  "7c138883-15b9-4b92-9e0b-df5e76c15a01",
+                                                                                     "name":  "day_folder_id",
+                                                                                     "value":  "={{ $json.id }}",
+                                                                                     "type":  "string"
+                                                                                 }
+                                                                             ]
+                                                         },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.set",
+                      "typeVersion":  3.5,
+                      "position":  [
+                                       864,
+                                       592
+                                   ],
+                      "id":  "e28d8efd-395c-4482-ae58-71b276f5b1fa",
+                      "name":  "SET day folder id - branch 2"
+                  },
+                  {
+                      "parameters":  {
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "caseSensitive":  true,
+                                                                            "leftValue":  "",
+                                                                            "typeValidation":  "strict",
+                                                                            "version":  3
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "id":  "b305c332-1c38-40c3-a4b8-a71b95b9ffe7",
+                                                                                   "leftValue":  "={{ $json.id }}",
+                                                                                   "rightValue":  "",
+                                                                                   "operator":  {
+                                                                                                    "type":  "string",
+                                                                                                    "operation":  "exists",
+                                                                                                    "singleValue":  true
+                                                                                                }
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2.3,
+                      "position":  [
+                                       -400,
+                                       224
+                                   ],
+                      "id":  "a2e6574d-4157-45fb-bf03-126032249924",
+                      "name":  "IF processed folder exists ?"
+                  }
+              ],
+    "connections":  {
+                        "CREATE input folder":  {
+                                                    "main":  [
+                                                                 [
+                                                                     {
+                                                                         "node":  "SET input folder id",
+                                                                         "type":  "main",
+                                                                         "index":  0
+                                                                     }
+                                                                 ]
+                                                             ]
+                                                },
+                        "SEARCH input folder":  {
+                                                    "main":  [
+                                                                 [
+                                                                     {
+                                                                         "node":  "IF input folder exists ?",
+                                                                         "type":  "main",
+                                                                         "index":  0
+                                                                     }
+                                                                 ]
+                                                             ]
+                                                },
+                        "SET input folder id":  {
+                                                    "main":  [
+                                                                 [
+                                                                     {
+                                                                         "node":  "SEARCH day folder - branch 0",
+                                                                         "type":  "main",
+                                                                         "index":  0
+                                                                     }
+                                                                 ]
+                                                             ]
+                                                },
+                        "IF input folder exists ?":  {
+                                                         "main":  [
+                                                                      [
+                                                                          {
+                                                                              "node":  "SET input folder id",
+                                                                              "type":  "main",
+                                                                              "index":  0
+                                                                          }
+                                                                      ],
+                                                                      [
+                                                                          {
+                                                                              "node":  "CREATE input folder",
+                                                                              "type":  "main",
+                                                                              "index":  0
+                                                                          }
+                                                                      ]
+                                                                  ]
+                                                     },
+                        "Schedule Trigger":  {
+                                                 "main":  [
+                                                              [
+                                                                  {
+                                                                      "node":  "SEARCH input folder",
+                                                                      "type":  "main",
+                                                                      "index":  0
+                                                                  },
+                                                                  {
+                                                                      "node":  "SEARCH processed folder",
+                                                                      "type":  "main",
+                                                                      "index":  0
+                                                                  },
+                                                                  {
+                                                                      "node":  "SEARCH rejected folder",
+                                                                      "type":  "main",
+                                                                      "index":  0
+                                                                  }
+                                                              ]
+                                                          ]
+                                             },
+                        "SEARCH processed folder":  {
+                                                        "main":  [
+                                                                     [
+                                                                         {
+                                                                             "node":  "IF processed folder exists ?",
+                                                                             "type":  "main",
+                                                                             "index":  0
+                                                                         }
+                                                                     ]
+                                                                 ]
+                                                    },
+                        "CREATE processed folder":  {
+                                                        "main":  [
+                                                                     [
+                                                                         {
+                                                                             "node":  "SET processed folder id",
+                                                                             "type":  "main",
+                                                                             "index":  0
+                                                                         }
+                                                                     ]
+                                                                 ]
+                                                    },
+                        "SET processed folder id":  {
+                                                        "main":  [
+                                                                     [
+                                                                         {
+                                                                             "node":  "SEARCH day folder - branch 1",
+                                                                             "type":  "main",
+                                                                             "index":  0
+                                                                         }
+                                                                     ]
+                                                                 ]
+                                                    },
+                        "SEARCH day folder - branch 0":  {
+                                                             "main":  [
+                                                                          [
+                                                                              {
+                                                                                  "node":  "IF day folder exists ? - branch 0",
+                                                                                  "type":  "main",
+                                                                                  "index":  0
+                                                                              }
+                                                                          ]
+                                                                      ]
+                                                         },
+                        "IF day folder exists ? - branch 0":  {
+                                                                  "main":  [
+                                                                               [
+                                                                                   {
+                                                                                       "node":  "SET day folder id - branch 0",
+                                                                                       "type":  "main",
+                                                                                       "index":  0
+                                                                                   }
+                                                                               ],
+                                                                               [
+                                                                                   {
+                                                                                       "node":  "CREATE day folder - branch 0",
+                                                                                       "type":  "main",
+                                                                                       "index":  0
+                                                                                   }
+                                                                               ]
+                                                                           ]
+                                                              },
+                        "CREATE day folder - branch 0":  {
+                                                             "main":  [
+                                                                          [
+                                                                              {
+                                                                                  "node":  "SET day folder id - branch 0",
+                                                                                  "type":  "main",
+                                                                                  "index":  0
+                                                                              }
+                                                                          ]
+                                                                      ]
+                                                         },
+                        "SEARCH day folder - branch 1":  {
+                                                             "main":  [
+                                                                          [
+                                                                              {
+                                                                                  "node":  "IF day folder exists ? - branch 1",
+                                                                                  "type":  "main",
+                                                                                  "index":  0
+                                                                              }
+                                                                          ]
+                                                                      ]
+                                                         },
+                        "IF day folder exists ? - branch 1":  {
+                                                                  "main":  [
+                                                                               [
+                                                                                   {
+                                                                                       "node":  "SET day folder id - branch 1",
+                                                                                       "type":  "main",
+                                                                                       "index":  0
+                                                                                   }
+                                                                               ],
+                                                                               [
+                                                                                   {
+                                                                                       "node":  "CREATE day folder - branch 1",
+                                                                                       "type":  "main",
+                                                                                       "index":  0
+                                                                                   }
+                                                                               ]
+                                                                           ]
+                                                              },
+                        "CREATE day folder - branch 1":  {
+                                                             "main":  [
+                                                                          [
+                                                                              {
+                                                                                  "node":  "SET day folder id - branch 1",
+                                                                                  "type":  "main",
+                                                                                  "index":  0
+                                                                              }
+                                                                          ]
+                                                                      ]
+                                                         },
+                        "SEARCH rejected folder":  {
+                                                       "main":  [
+                                                                    [
+                                                                        {
+                                                                            "node":  "IF rejected folder exists ?",
+                                                                            "type":  "main",
+                                                                            "index":  0
+                                                                        }
+                                                                    ]
+                                                                ]
+                                                   },
+                        "IF rejected folder exists ?":  {
+                                                            "main":  [
+                                                                         [
+                                                                             {
+                                                                                 "node":  "SET rejected folder id",
+                                                                                 "type":  "main",
+                                                                                 "index":  0
+                                                                             }
+                                                                         ],
+                                                                         [
+                                                                             {
+                                                                                 "node":  "CREATE rejected folder",
+                                                                                 "type":  "main",
+                                                                                 "index":  0
+                                                                             }
+                                                                         ]
+                                                                     ]
+                                                        },
+                        "CREATE rejected folder":  {
+                                                       "main":  [
+                                                                    [
+                                                                        {
+                                                                            "node":  "SET rejected folder id",
+                                                                            "type":  "main",
+                                                                            "index":  0
+                                                                        }
+                                                                    ]
+                                                                ]
+                                                   },
+                        "SET rejected folder id":  {
+                                                       "main":  [
+                                                                    [
+                                                                        {
+                                                                            "node":  "SEARCH day folder - branch 2",
+                                                                            "type":  "main",
+                                                                            "index":  0
+                                                                        }
+                                                                    ]
+                                                                ]
+                                                   },
+                        "SEARCH day folder - branch 2":  {
+                                                             "main":  [
+                                                                          [
+                                                                              {
+                                                                                  "node":  "IF day folder exists ? - branch 2",
+                                                                                  "type":  "main",
+                                                                                  "index":  0
+                                                                              }
+                                                                          ]
+                                                                      ]
+                                                         },
+                        "IF day folder exists ? - branch 2":  {
+                                                                  "main":  [
+                                                                               [
+                                                                                   {
+                                                                                       "node":  "SET day folder id - branch 2",
+                                                                                       "type":  "main",
+                                                                                       "index":  0
+                                                                                   }
+                                                                               ],
+                                                                               [
+                                                                                   {
+                                                                                       "node":  "CREATE day folder - branch 2",
+                                                                                       "type":  "main",
+                                                                                       "index":  0
+                                                                                   }
+                                                                               ]
+                                                                           ]
+                                                              },
+                        "CREATE day folder - branch 2":  {
+                                                             "main":  [
+                                                                          [
+                                                                              {
+                                                                                  "node":  "SET day folder id - branch 2",
+                                                                                  "type":  "main",
+                                                                                  "index":  0
+                                                                              }
+                                                                          ]
+                                                                      ]
+                                                         },
+                        "IF processed folder exists ?":  {
+                                                             "main":  [
+                                                                          [
+                                                                              {
+                                                                                  "node":  "SET processed folder id",
+                                                                                  "type":  "main",
+                                                                                  "index":  0
+                                                                              }
+                                                                          ],
+                                                                          [
+                                                                              {
+                                                                                  "node":  "CREATE processed folder",
+                                                                                  "type":  "main",
+                                                                                  "index":  0
+                                                                              }
+                                                                          ]
+                                                                      ]
+                                                         }
+                    },
+    "settings":  {
+                     "executionOrder":  "v1",
+                     "binaryMode":  "separate",
+                     "timezone":  "America/Argentina/Buenos_Aires"
+                 },
+    "active":  false
+}

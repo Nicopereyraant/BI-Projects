@@ -1,0 +1,820 @@
+{
+  "name": "Cafeteria POS - Cierre y carga diaria (multi-sucursal)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 20 * * *"
+            }
+          ]
+        }
+      },
+      "id": "04df1d87-ac03-46c8-acd2-db1b9365f51c",
+      "name": "Schedule Trigger a 20:30",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -6784,
+        624
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const date = $now.setZone('America/Argentina/Buenos_Aires').toFormat('yyyy-LL-dd');\nreturn [{ json: { operating_date: date, expected_file: `pos_${date}.csv`, root_folder_id: 'REEMPLAZAR_ID_CARPETA_RAIZ' } }];"
+      },
+      "id": "899e4033-44ca-4f9e-a283-bae98fd51e78",
+      "name": "Set operating context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -6560,
+        624
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "searchMethod": "query",
+        "queryString": "={{ \"name = 'input' and mimeType = 'application/vnd.google-apps.folder' and '\" + $('Set operating context').first().json.root_folder_id + \"' in parents and trashed = false\" }}",
+        "filter": {
+          "driveId": {
+            "mode": "list",
+            "value": "My Drive"
+          }
+        },
+        "options": {}
+      },
+      "id": "2e0c795c-666a-42a3-8e59-ed365dbf9e70",
+      "name": "Find input folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -6336,
+        624
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "searchMethod": "query",
+        "queryString": "={{ \"name = '\" + $('Set operating context').first().json.operating_date + \"' and mimeType = 'application/vnd.google-apps.folder' and '\" + $('Find input folder').first().json.id + \"' in parents and trashed = false\" }}",
+        "filter": {
+          "driveId": {
+            "mode": "list",
+            "value": "My Drive"
+          }
+        },
+        "options": {}
+      },
+      "id": "b093743e-dac5-4ed2-9443-f783a6af00bb",
+      "name": "Find input day folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -6112,
+        624
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.id }}",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "10ca654f-1cc1-40b9-a2e9-6952fa770223",
+      "name": "Input day folder exists?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -5872,
+        624
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "throw new Error(`No existe input/${$('Set operating context').first().json.operating_date}/. Reintentar o alertar; nunca se carga vacio.`);"
+      },
+      "id": "263010ba-1536-475b-846b-2d43b8165850",
+      "name": "Fail a no daily file",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5552,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "searchMethod": "query",
+        "queryString": "={{ \"'\" + $('Find input day folder').first().json.id + \"' in parents and trashed = false\" }}",
+        "filter": {
+          "driveId": {
+            "mode": "list",
+            "value": "My Drive"
+          }
+        },
+        "options": {}
+      },
+      "id": "983df441-8642-4d0a-a3fc-35197a75ac00",
+      "name": "Find raw POS CSV",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -5552,
+        560
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const date = $('Set operating context').first().json.operating_date;\nconst pattern = new RegExp(`^pos_${date}_(?:S-)?(\\\\d{1,3})\\\\.csv$`, 'i');\nconst files = $input.all().map(item => item.json).filter(file => file?.id);\nconst csvFiles = files.filter(file => file.name?.toLowerCase().endsWith('.csv'));\nconst unexpected = csvFiles.filter(file => !pattern.test(file.name));\nif (unexpected.length) throw new Error(`CSV con nombre invalido: ${unexpected.map(file => file.name).join(', ')}. Usa pos_${date}_S-XX.csv.`);\nconst candidates = csvFiles.map(file => {\n  const match = file.name.match(pattern);\n  return match ? { ...file, operating_date: date, branch_code: `S-${match[1].padStart(2, '0')}`, expected_sucursal_id: String(Number(match[1])) } : null;\n}).filter(Boolean);\nif (!candidates.length) throw new Error(`No hay CSVs para procesar en input/${date}/. Se esperaba pos_${date}_S-XX.csv.`);\nreturn candidates.map(json => ({ json }));"
+      },
+      "id": "61e7f5c0-8c1d-4f0d-ad01-9fdd87e370b7",
+      "name": "Select daily branch CSVs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5312,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": "={{ $json.id }}",
+        "options": {}
+      },
+      "id": "d3c108e3-b79f-47bb-80a5-515094c50c88",
+      "name": "Download raw POS CSV",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -4752,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "32c48fcd-b0a5-442e-b851-6522dc394280",
+      "name": "Parse CSV",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -4560,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const required = ['venta_id', 'fecha_hora', 'sucursal_id', 'producto_id', 'cantidad', 'precio_unitario', 'medio_pago', 'canal'];\nconst rows = $input.all().map(item => item.json);\nconst source = $('Loop daily branch CSVs').item.json;\nconst date = source.operating_date;\nconst errors = [];\nconst normalizarClave = (value) =>\n  String(value ?? '')\n    .trim()\n    .replace(/\\s+/g, ' ')\n    .normalize('NFD')\n    .replace(/[\\u0300-\\u036f]/g, '')\n    .toLowerCase();\n\nconst mediosPago = new Map([\n  ['efectivo', 'Efectivo'],\n  ['mercado pago', 'Mercado Pago'],\n  ['tarjeta de credito', 'Tarjeta de crédito'],\n  ['tarjeta credito', 'Tarjeta de crédito'],\n  ['tarjeta de debito', 'Tarjeta de débito'],\n  ['tarjeta debito', 'Tarjeta de débito'],\n]);\n\nconst canales = new Map([\n  ['salon', 'Salón'],\n  ['local', 'Salón'],\n  ['take away', 'Take Away'],\n  ['takeaway', 'Take Away'],\n  ['delivery', 'Delivery'],\n]);\n\nfunction valorCanonico(value, mapa, field, row) {\n  const original = String(value ?? '').trim();\n\n  if (!original) return null;\n\n  if (original.includes('\\uFFFD')) {\n    errors.push({ row, code: 'invalid_encoding', field, received: original });\n    return null;\n  }\n\n  const normalizado = mapa.get(normalizarClave(original));\n\n  if (!normalizado) {\n    errors.push({ row, code: 'invalid_value', field, received: original });\n    return null;\n  }\n\n  return normalizado;\n}\nconst sales = new Map();\nconst lines = [];\nif (!rows.length) errors.push({ code: 'empty_csv' });\nfor (let i = 0; i < rows.length; i++) {\n  const r = rows[i]; const row = i + 2;\n  for (const column of required) if (r[column] === undefined || String(r[column]).trim() === '') errors.push({ row, code: 'missing_field', field: column });\n  const qty = Number(r.cantidad), price = Number(r.precio_unitario);\n  if (!(qty > 0)) errors.push({ row, code: 'invalid_quantity' });\n  if (!(price >= 0)) errors.push({ row, code: 'invalid_price' });\n  if (!String(r.fecha_hora || '').startsWith(date)) errors.push({ row, code: 'outside_operating_date' });\n  if (String(r.sucursal_id || '').trim() !== source.expected_sucursal_id) errors.push({ row, code: 'branch_does_not_match_filename', expected: source.expected_sucursal_id, received: String(r.sucursal_id || '').trim() });\n  const medio_pago = valorCanonico(r.medio_pago, mediosPago, 'medio_pago', row);\n  const canal = valorCanonico(r.canal, canales, 'canal', row);\n  if (errors.some(error => error.row === row)) continue;\n  const venta_id = String(r.venta_id).trim();\n  const fecha_hora = `${String(r.fecha_hora).trim().replace(' ', 'T')}-03:00`;\n  const subtotal = Math.round(qty * price * 100) / 100;\n  const linea_id = lines.filter(line => line.venta_id === venta_id).length + 1;\n  lines.push({\n  venta_id,\n  linea_id,\n  fecha_hora,\n  sucursal_id: String(r.sucursal_id).trim(),\n  producto_id: String(r.producto_id).trim(),\n  cantidad: qty,\n  precio_unitario: price,\n  subtotal,\n  medio_pago,\n  canal,\n});\n} // cierra: for (let i = 0; i < rows.length; i++)\nfor (const line of lines) {\n  const old = sales.get(line.venta_id);\n  const identity = { fecha_hora: line.fecha_hora, sucursal_id: line.sucursal_id, medio_pago: line.medio_pago, canal: line.canal };\n  if (old && JSON.stringify(old.identity) !== JSON.stringify(identity)) errors.push({ code: 'inconsistent_sale_header', venta_id: line.venta_id });\n  else sales.set(line.venta_id, { ...old, identity, total_venta: (old?.total_venta || 0) + line.subtotal });\n}\nif (errors.length) return [{ json: { valid: false, source_file_id: source.id, source_file_name: source.name, operating_date: date, branch_code: source.branch_code, errors } }];\nreturn [{ json: { valid: true, source_file_id: source.id, source_file_name: source.name, operating_date: date, branch_code: source.branch_code, lines, sales: [...sales].map(([venta_id, sale]) => ({ venta_id, ...sale.identity, total_venta: Math.round(sale.total_venta * 100) / 100 })) } }];"
+      },
+      "id": "bc7347a8-1e15-4ad3-9ff6-7504c66d3cff",
+      "name": "Validate and derive batch",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4352,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "f8826b3c-89fe-4903-bec6-0a6e0731212c",
+      "name": "Valid batch?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -4144,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM public.process_pos_batch($1::jsonb);",
+        "options": {
+          "queryReplacement": "={{ JSON.stringify($json) }}"
+        }
+      },
+      "id": "a7da1c1d-61d6-4ae4-8d6d-a7668e0bf84d",
+      "name": "Supabase a atomic ingest",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -3712,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ ['completed', 'already_completed'].includes($json.status) }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "4f8bb4fb-e4d9-4110-8df6-ff70c525a49c",
+      "name": "Database committed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -3472,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "searchMethod": "query",
+        "queryString": "={{ \"name = 'processed' and mimeType = 'application/vnd.google-apps.folder' and '\" + $('Set operating context').first().json.root_folder_id + \"' in parents and trashed = false\" }}",
+        "filter": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -3152,
+        144
+      ],
+      "id": "381a66c2-677a-4030-a937-3a4112a7403b",
+      "name": "Find processed folder"
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Loop daily branch CSVs').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Find processed day folder').first().json.id }}",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2688,
+        144
+      ],
+      "id": "aae32d84-f200-4e75-8a20-9b18581a5d5d",
+      "name": "Move raw CSV to processed"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "searchMethod": "query",
+        "queryString": "={{ \"name = '\" + $('Set operating context').first().json.operating_date + \"' and mimeType = 'application/vnd.google-apps.folder' and '\" + $('Find processed folder').first().json.id + \"' in parents and trashed = false\" }}",
+        "filter": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2928,
+        144
+      ],
+      "id": "09cd00d1-bc86-4195-b918-b221dbfff652",
+      "name": "Find processed day folder"
+    },
+    {
+      "parameters": {
+        "jsCode": "const validation = $('Validate and derive batch').item.json;\nconst source = $('Loop daily branch CSVs').item.json;\nconst date = source.operating_date;\nconst dbResult = $json.status ? { status: $json.status, batch_id: $json.batch_id, message: $json.message } : null;\nconst report = { generated_at: $now.setZone('America/Argentina/Buenos_Aires').toISO(), operating_date: date, branch: source.branch_code, source_file: { id: source.id, name: source.name }, validation_errors: validation.errors ?? [], database_result: dbResult };\nreturn [{ json: { error_file_name: `errores_${date}_${source.branch_code}.json`, error_file_content: JSON.stringify(report, null, 2) } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3520,
+        720
+      ],
+      "id": "1017df9a-362a-4e5e-89ea-47afd861f26a",
+      "name": "Build rejection report"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "searchMethod": "query",
+        "queryString": "={{ \"name = 'rejected' and mimeType = 'application/vnd.google-apps.folder' and '\" + $('Set operating context').first().json.root_folder_id + \"' in parents and trashed = false\" }}",
+        "filter": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -3296,
+        720
+      ],
+      "alwaysOutputData": true,
+      "id": "7e5581ac-1ebd-455b-827e-30df78d9792e",
+      "name": "Find rejected folder"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "searchMethod": "query",
+        "queryString": "={{ \"name = '\" + $('Set operating context').first().json.operating_date + \"' and mimeType = 'application/vnd.google-apps.folder' and '\" + $('Find rejected folder').first().json.id + \"' in parents and trashed = false\" }}",
+        "filter": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -3088,
+        720
+      ],
+      "alwaysOutputData": true,
+      "id": "c9401afd-ec30-4207-84e4-e1f597d9e4b7",
+      "name": "Find rejected day folder"
+    },
+    {
+      "parameters": {
+        "operation": "createFromText",
+        "content": "={{ $('Build rejection report').item.json.error_file_content }}",
+        "name": "={{ $('Build rejection report').item.json.error_file_name }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Find rejected day folder').first().json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2864,
+        720
+      ],
+      "id": "c15245a1-5df5-4752-ae27-20ebf8bca87c",
+      "name": "Write errores_<fecha>.json"
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Loop daily branch CSVs').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Find rejected day folder').first().json.id }}",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2640,
+        720
+      ],
+      "id": "e6ebe75a-1519-4853-82dd-3fd4cc0ff316",
+      "name": "Move raw CSV to rejected"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -5056,
+        560
+      ],
+      "id": "d03f1880-09c1-4212-9d2e-c3d4bf7ced6a",
+      "name": "Loop daily branch CSVs"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -4752,
+        352
+      ],
+      "id": "76669024-066c-4afb-ab97-7b1a426f02fa",
+      "name": "No Operation: All daily files handled"
+    },
+    {
+      "parameters": {
+        "sendTo": "CONFIGURAR_DESTINATARIO@example.com",
+        "subject": "={{ `Cafeteria POS | Carga confirmada | ${$('Set operating context').first().json.operating_date} | ${$('Loop daily branch CSVs').item.json.name}` }}",
+        "emailType": "text",
+        "message": "={{ [\n  'Carga diaria confirmada.',\n  '',\n  `Archivo: ${$('Loop daily branch CSVs').item.json.name}`,\n  `Sucursal: ${$('Loop daily branch CSVs').item.json.branch_code}`,\n  `Fecha operativa: ${$('Set operating context').first().json.operating_date}`,\n  `Estado: ${$('Supabase a atomic ingest').item.json.status}`,\n  `Batch ID: ${$('Supabase a atomic ingest').item.json.batch_id}`,\n  `Tickets: ${$('Validate and derive batch').item.json.sales.length}`,\n  `Lineas: ${$('Validate and derive batch').item.json.lines.length}`,\n  `Archivo en Drive: https://drive.google.com/open?id=${$('Loop daily branch CSVs').item.json.id}`,\n].join('\\n') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -2432,
+        144
+      ],
+      "id": "2e06e95c-90bd-43f7-8fc2-176685786e0d",
+      "name": "Gmail — Notify processed",
+      "webhookId": "b9cad112-afe8-48c3-8bee-082f71b6864b",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "sendTo": "CONFIGURAR_DESTINATARIO@example.com",
+        "subject": "={{ `Cafeteria POS | ARCHIVO RECHAZADO | ${$('Set operating context').first().json.operating_date} | ${$('Loop daily branch CSVs').item.json.name}` }}",
+        "emailType": "text",
+        "message": "={{ [\n  'Archivo POS rechazado.',\n  '',\n  `Fecha operativa: ${$('Set operating context').first().json.operating_date}`,\n  `Archivo: ${$('Loop daily branch CSVs').item.json.name}`,\n  `Sucursal: ${$('Loop daily branch CSVs').item.json.branch_code}`,\n  '',\n  'El archivo no fue cargado en Supabase.',\n  '',\n  'Archivo CSV rechazado:',\n  `https://drive.google.com/open?id=${$('Loop daily branch CSVs').item.json.id}`,\n  '',\n  'Reporte técnico de errores:',\n  `https://drive.google.com/open?id=${$('Write errores_<fecha>.json').item.json.id}`,\n  '',\n  'Acción requerida:',\n  '1. Descargar el CSV rechazado.',\n  '2. Revisar el reporte de errores.',\n  '3. Corregir los datos en el CSV.',\n  '4. Subirlo nuevamente a input/<fecha>/ con el mismo nombre.',\n  '5. Ejecutar nuevamente el workflow.'\n].join('\\n') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -2432,
+        720
+      ],
+      "id": "d3806e0e-0271-446d-8f9c-73e4a359215e",
+      "name": "Gmail — Notify rejected",
+      "webhookId": "b9cad112-afe8-48c3-8bee-082f71b6864b",
+      "retryOnFail": true
+    }
+  ],
+  "connections": {
+    "Schedule Trigger a 20:30": {
+      "main": [
+        [
+          {
+            "node": "Set operating context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set operating context": {
+      "main": [
+        [
+          {
+            "node": "Find input folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find input folder": {
+      "main": [
+        [
+          {
+            "node": "Find input day folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find input day folder": {
+      "main": [
+        [
+          {
+            "node": "Input day folder exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input day folder exists?": {
+      "main": [
+        [
+          {
+            "node": "Find raw POS CSV",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fail a no daily file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find raw POS CSV": {
+      "main": [
+        [
+          {
+            "node": "Select daily branch CSVs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download raw POS CSV": {
+      "main": [
+        [
+          {
+            "node": "Parse CSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse CSV": {
+      "main": [
+        [
+          {
+            "node": "Validate and derive batch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate and derive batch": {
+      "main": [
+        [
+          {
+            "node": "Valid batch?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid batch?": {
+      "main": [
+        [
+          {
+            "node": "Supabase a atomic ingest",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build rejection report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase a atomic ingest": {
+      "main": [
+        [
+          {
+            "node": "Database committed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Database committed?": {
+      "main": [
+        [
+          {
+            "node": "Find processed folder",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build rejection report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find processed folder": {
+      "main": [
+        [
+          {
+            "node": "Find processed day folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find processed day folder": {
+      "main": [
+        [
+          {
+            "node": "Move raw CSV to processed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop daily branch CSVs": {
+      "main": [
+        [
+          {
+            "node": "No Operation: All daily files handled",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download raw POS CSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select daily branch CSVs": {
+      "main": [
+        [
+          {
+            "node": "Loop daily branch CSVs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build rejection report": {
+      "main": [
+        [
+          {
+            "node": "Find rejected folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find rejected folder": {
+      "main": [
+        [
+          {
+            "node": "Find rejected day folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find rejected day folder": {
+      "main": [
+        [
+          {
+            "node": "Write errores_<fecha>.json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write errores_<fecha>.json": {
+      "main": [
+        [
+          {
+            "node": "Move raw CSV to rejected",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Move raw CSV to processed": {
+      "main": [
+        [
+          {
+            "node": "Gmail — Notify processed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Move raw CSV to rejected": {
+      "main": [
+        [
+          {
+            "node": "Gmail — Notify rejected",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation: All daily files handled": {
+      "main": [
+        []
+      ]
+    },
+    "Gmail — Notify processed": {
+      "main": [
+        [
+          {
+            "node": "Loop daily branch CSVs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail — Notify rejected": {
+      "main": [
+        [
+          {
+            "node": "Loop daily branch CSVs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "active": false
+}

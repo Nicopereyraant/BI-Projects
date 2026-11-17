@@ -1,0 +1,13 @@
+# Datos de acceso y configuraciones locales
+.env
+.env.*
+!.env.example
+*secret*
+*password*
+*credentials*
+
+# Salidas locales y archivos grandes del dashboard anterior
+*.pbix
+*.zip
+*.log
+__pycache__/

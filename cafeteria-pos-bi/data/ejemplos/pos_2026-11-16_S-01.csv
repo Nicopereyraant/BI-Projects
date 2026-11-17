@@ -1,0 +1,7 @@
+venta_id,fecha_hora,sucursal_id,producto_id,cantidad,precio_unitario,medio_pago,canal
+V-20261116-S01-1601,2026-11-16 08:42:00,1,1,2,2800.00,Mercado Pago,Salon
+V-20261116-S01-1601,2026-11-16 08:42:00,1,7,2,2200.00,Mercado Pago,Salon
+V-20261116-S01-1602,2026-11-16 12:18:00,1,12,1,6500.00,Tarjeta de credito,Take Away
+V-20261116-S01-1602,2026-11-16 12:18:00,1,15,1,3800.00,Tarjeta de credito,Take Away
+V-20261116-S01-1603,2026-11-16 18:26:00,1,3,1,4200.00,Efectivo,Salon
+V-20261116-S01-1603,2026-11-16 18:26:00,1,10,1,5200.00,Efectivo,Salon
